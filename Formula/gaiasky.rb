@@ -73,7 +73,7 @@ class Gaiasky < Formula
       #!/bin/bash
       exec "#{libexec}/gaiasky" "$@"
     SH
-    app_macos/"gaiasky".chmod 0755
+    (app_macos/"gaiasky").chmod 0755
 
     # Info.plist
     (app_contents/"Info.plist").write <<~XML
