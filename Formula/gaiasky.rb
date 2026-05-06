@@ -71,7 +71,7 @@ class Gaiasky < Formula
     # Launcher script that delegates to the Homebrew-installed gaiasky
     (app_macos/"gaiasky").write <<~SH
       #!/bin/bash
-      exec "#{libexec}/gaiasky" "$@"
+      exec "#{bin}/gaiasky" "$@"
     SH
     (app_macos/"gaiasky").chmod 0755
 
@@ -96,6 +96,8 @@ class Gaiasky < Formula
         <string>#{version}</string>
         <key>CFBundlePackageType</key>
         <string>APPL</string>
+        <key>CFBundleIconFile</key>
+        <string>app</string>
         <key>LSMinimumSystemVersion</key>
         <string>11.0</string>
         <key>NSHighResolutionCapable</key>
