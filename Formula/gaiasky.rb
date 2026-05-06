@@ -8,6 +8,8 @@ class Gaiasky < Formula
   sha256 "724f512b267af226066b48201e9596abba187f4cf1058841971bcb2ec42db6b0"
   version "3.7.2"
 
+  head "https://codeberg.org/gaiasky/gaiasky.git", branch: "master"
+
   depends_on "openjdk" => :build   # JDK 25+ needed for compilation
   depends_on "openjdk"              # also needed at runtime
 
@@ -16,19 +18,25 @@ class Gaiasky < Formula
   def install
     ENV["GS_JAVA_VERSION_CHECK"] = "false"
 
-    # Create minimal git history so git-based version detection works.
-    # This ensures the distribution dir is named e.g. "gaiasky-v3.6.7.abc1234"
-    # and the version file inside the JAR is correct.
-    system "git", "-c", "user.email=brew@localhost",
-           "-c", "user.name=Homebrew",
-           "init"
-    system "git", "-c", "user.email=brew@localhost",
-           "-c", "user.name=Homebrew",
-           "add", "."
-    system "git", "-c", "user.email=brew@localhost",
-           "-c", "user.name=Homebrew",
-           "commit", "-q", "-m", "initial"
-    system "git", "tag", "#{version}"
+    # Git setup for version detection
+    if build.stable?
+      # Stable builds come from a tarball (no .git directory).
+      # Create minimal git history so git-describe produces a valid version string.
+      system "git", "-c", "user.email=brew@localhost",
+             "-c", "user.name=Homebrew",
+             "init"
+      system "git", "-c", "user.email=brew@localhost",
+             "-c", "user.name=Homebrew",
+             "add", "."
+      system "git", "-c", "user.email=brew@localhost",
+             "-c", "user.name=Homebrew",
+             "commit", "-q", "-m", "initial"
+      system "git", "tag", "#{version}"
+    else
+      # HEAD builds: Homebrew already cloned the full git repo.
+      # Fetch tags so git-describe can find the nearest tag for the version string.
+      system "git", "fetch", "--tags", "--unshallow" rescue nil
+    end
 
     # Build the distribution package.
     # Disable Linux-only man-page generation to avoid a help2man dependency.
