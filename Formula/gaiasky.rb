@@ -71,4 +71,12 @@ class Gaiasky < Formula
     # Running with --help should exit 0 and show usage
     shell_output("#{bin}/gaiasky --help", 0)
   end
+
+  # Livecheck block to detect new updates
+  # Use codeberg releases
+  # Do `brew livecheck gaiasky`
+  livecheck do
+    url "https://codeberg.org/gaiasky/gaiasky/releases"
+    regex(%r{href=.*?/archive/?(\d+(?:\.\d+)+)\.t}i)
+  end
 end
